@@ -1,0 +1,63 @@
+http:
+  port: 8083
+
+admin:
+  port: 9876
+  host: localhost
+
+apiEndpoints:
+  clientesEndpoint:
+    paths:
+      - /clientes/*
+      - /clientes
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+
+  pedidosEndpoint:
+    paths:
+      - /pedidos/*
+      - /pedidos
+    methods:
+      - GET
+      - POST
+      - PUT
+      - DELETE
+
+serviceEndpoints:
+  cliente_service:
+    url: http://localhost:3003
+
+  pedido_service:
+    url: http://localhost:3005
+
+policies:
+  - log
+  - proxy
+
+pipelines:
+  clientesPipeline:
+    apiEndpoints:
+      - clientesEndpoint
+    policies:
+      - log:
+          - action:
+              message: "Solicitud a clientes: ${req.method} ${req.url}"
+      - proxy:
+          - action:
+              serviceEndpoint: cliente_service
+              stripPath: false
+  
+  pedidosPipeline:
+    apiEndpoints:
+      - pedidosEndpoint
+    policies:
+      - log:
+          - action:
+              message: "Solicitud a pedidos: ${req.method} ${req.url} ${req.status}"
+      - proxy:
+          - action:
+              serviceEndpoint: pedido_service
+              stripPath: false

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Pedido" ALTER COLUMN "clienteId" DROP NOT NULL,
+ALTER COLUMN "total" DROP NOT NULL;
